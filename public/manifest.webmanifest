@@ -1,7 +1,6 @@
 {
   "name": "Скоро буду",
   "short_name": "Скоро буду",
-  "description": "Курьерская доставка",
   "theme_color": "#4A90E2",
   "background_color": "#ffffff",
   "display": "standalone",
