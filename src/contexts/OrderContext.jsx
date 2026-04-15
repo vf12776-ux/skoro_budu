@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const OrderContext = createContext();
 
@@ -6,6 +6,22 @@ export const useOrder = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
+    // Загрузка сохранённых заказов
+  useEffect(() => {
+    const saved = localStorage.getItem('orders');
+    if (saved) {
+      try {
+        setOrders(JSON.parse(saved));
+      } catch (err) {
+        console.error('Ошибка загрузки заказов', err);
+      }
+    }
+  }, []);
+
+  // Сохранение заказов при каждом изменении
+  useEffect(() => {
+    localStorage.setItem('orders', JSON.stringify(orders));
+  }, [orders]);
   const [messages, setMessages] = useState({});
 
   const addOrder = (order) => {
