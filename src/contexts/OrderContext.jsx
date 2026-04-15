@@ -6,7 +6,9 @@ export const useOrder = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
-    // Загрузка сохранённых заказов
+  const [messages, setMessages] = useState({});
+
+  // Загрузка заказов из localStorage
   useEffect(() => {
     const saved = localStorage.getItem('orders');
     if (saved) {
@@ -18,11 +20,27 @@ export const OrderProvider = ({ children }) => {
     }
   }, []);
 
-  // Сохранение заказов при каждом изменении
+  // Сохранение заказов в localStorage
   useEffect(() => {
     localStorage.setItem('orders', JSON.stringify(orders));
   }, [orders]);
-  const [messages, setMessages] = useState({});
+
+  // Загрузка сообщений из localStorage
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('messages');
+    if (savedMessages) {
+      try {
+        setMessages(JSON.parse(savedMessages));
+      } catch (err) {
+        console.error('Ошибка загрузки сообщений', err);
+      }
+    }
+  }, []);
+
+  // Сохранение сообщений в localStorage
+  useEffect(() => {
+    localStorage.setItem('messages', JSON.stringify(messages));
+  }, [messages]);
 
   const addOrder = (order) => {
     console.log('Добавлен заказ в контекст:', order);
