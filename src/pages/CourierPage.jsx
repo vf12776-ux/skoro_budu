@@ -5,8 +5,7 @@ import { Map } from '../components/Map';
 export const CourierPage = () => {
   const { orders, updateOrderStatus, addMessage, messages, updateCourierLocation } = useOrder();
   const [chatInput, setChatInput] = useState({});
-  const courierId = 'courier1'; // имитация текущего курьера
-
+  const [courierId, setCourierId] = useState(1); // выбор ID курьера (число)
   const courierOrders = orders.filter(o => o.courierId === courierId && o.status !== 'completed');
 
   const handleSendLocation = (orderId) => {
@@ -29,6 +28,17 @@ export const CourierPage = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+  <label>ID курьера (1-5): </label>
+  <input 
+    type="number" 
+    min="1" 
+    max="5" 
+    value={courierId} 
+    onChange={e => setCourierId(Number(e.target.value))}
+    style={{ marginLeft: '10px' }}
+  />
+</div>
       <h2>Курьер: Активные заказы</h2>
       {courierOrders.length === 0 && <p>Нет активных заказов</p>}
       {courierOrders.map(order => (

@@ -9,7 +9,7 @@ export const AdminPage = () => {
 
   const handleAssign = (orderId) => {
     const courier = selectedCourier[orderId];
-    if (courier) {
+    if (courier && courier !== '') {
       assignCourier(orderId, courier);
       setSelectedCourier({ ...selectedCourier, [orderId]: '' });
     }
@@ -26,12 +26,14 @@ export const AdminPage = () => {
           <p>Локация: {order.location?.lat}, {order.location?.lng}</p>
           <select
             value={selectedCourier[order.id] || ''}
-            onChange={e => setSelectedCourier({ ...selectedCourier, [order.id]: e.target.value })}
+            onChange={e => setSelectedCourier({ ...selectedCourier, [order.id]: Number(e.target.value) })}
           >
             <option value="">Выберите курьера</option>
-            <option value="courier1">Курьер 1</option>
-            <option value="courier2">Курьер 2</option>
-            <option value="courier3">Курьер 3</option>
+            <option value={1}>Курьер 1</option>
+            <option value={2}>Курьер 2</option>
+            <option value={3}>Курьер 3</option>
+            <option value={4}>Курьер 4</option>
+            <option value={5}>Курьер 5</option>
           </select>
           <button onClick={() => handleAssign(order.id)}>Назначить</button>
         </div>
