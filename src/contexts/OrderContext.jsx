@@ -73,6 +73,9 @@ export const OrderProvider = ({ children }) => {
   const rateOrder = (orderId, rating) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, rating } : o));
   };
+  const cancelOrder = (orderId) => {
+  setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'cancelled' } : o));
+};
 
   return (
     <OrderContext.Provider value={{
@@ -83,7 +86,8 @@ export const OrderProvider = ({ children }) => {
       assignCourier,
       addMessage,
       updateCourierLocation,
-      rateOrder
+      rateOrder,
+      cancelOrder
     }}>
       {children}
     </OrderContext.Provider>

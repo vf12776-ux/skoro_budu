@@ -3,7 +3,7 @@ import { useOrder } from '../contexts/OrderContext';
 import { Map } from '../components/Map';
 
 export const ClientPage = () => {
-  const { orders, addOrder, addMessage, messages, rateOrder } = useOrder();
+  const { orders, addOrder, addMessage, messages, rateOrder, cancelOrder} = useOrder();
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [selectedLat, setSelectedLat] = useState(null);
@@ -70,6 +70,11 @@ export const ClientPage = () => {
           {order.courierLocation && (
             <p>Курьер: {order.courierLocation.lat}, {order.courierLocation.lng}</p>
           )}
+          {order.status !== 'completed' && order.status !== 'cancelled' && (
+  <button onClick={() => cancelOrder(order.id)} style={{ marginLeft: '10px', backgroundColor: 'red' }}>
+    Отменить заказ
+  </button>
+)}
           <div>
             <h4>Чат</h4>
             {(messages[order.id] || []).map((msg, i) => (

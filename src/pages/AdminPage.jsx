@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useOrder } from '../contexts/OrderContext';
 
 export const AdminPage = () => {
-  const { orders, assignCourier } = useOrder();
+  const { orders, assignCourier, cancelOrder, deleteOrder } = useOrder();
   const [selectedCourier, setSelectedCourier] = useState({});
 
   const pendingOrders = orders.filter(o => !o.courierId && o.status === 'pending');
@@ -43,6 +43,8 @@ export const AdminPage = () => {
       {orders.map(order => (
         <div key={order.id} style={{ border: '1px solid gray', margin: 5, padding: 5 }}>
           <p>ID: {order.id} | Статус: {order.status} | Курьер: {order.courierId || '—'}</p>
+          <button onClick={() => cancelOrder(order.id)}>Отменить</button>
+<button onClick={() => deleteOrder(order.id)} style={{ marginLeft: '10px' }}>Удалить</button>
           {order.rating && <p>Оценка: {order.rating}</p>}
         </div>
       ))}
