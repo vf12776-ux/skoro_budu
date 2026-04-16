@@ -10,15 +10,13 @@ export const ClientPage = () => {
   const [selectedLng, setSelectedLng] = useState(null);
   const [chatInput, setChatInput] = useState({});
   const [rating, setRating] = useState({});
+  const [clientId, setClientId] = useState(1); // ID текущего клиента
 
   const handleCreateOrder = () => {
-    console.log('Создание заказа:', { from, to, selectedLat, selectedLng });
-    // Только адреса обязательны
     if (from && to) {
-      // Если координаты не выбраны, ставим значение по умолчанию (центр Москвы, но можно изменить)
       const lat = selectedLat !== null ? selectedLat : 55.751244;
       const lng = selectedLng !== null ? selectedLng : 37.618423;
-      addOrder({ from, to, location: { lat, lng } });
+      addOrder({ from, to, location: { lat, lng }, clientId }); // передаём clientId
       setFrom('');
       setTo('');
       setSelectedLat(null);
@@ -41,20 +39,30 @@ export const ClientPage = () => {
     setRating({ ...rating, [orderId]: value });
   };
 
-  // Показываем ВСЕ заказы (без фильтра по courierId)
-  const clientOrders = orders;
+  // Фильтруем заказы только текущего клиента
+  const clientOrders = orders.filter(o => o.clientId === clientId);
 
   return (
     <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>ID клиента (1-10): </label>
+        <input
+          type="number"
+          min="1"
+          max="10"
+          value={clientId}
+          onChange={e => setClientId(Number(e.target.value))}
+          style={{ marginLeft: '10px' }}
+        />
+      </div>
       <h2>Клиент: Создать заказ</h2>
       <input placeholder="Откуда" value={from} onChange={e => setFrom(e.target.value)} />
       <input placeholder="Куда" value={to} onChange={e => setTo(e.target.value)} />
-      <Map
-        onLocationSelect={(lat, lng) => { setSelectedLat(lat); setSelectedLng(lng); }}
-      />
+      <Map onLocationSelect={(lat, lng) => { setSelectedLat(lat); setSelectedLng(lng); }} />
       <button onClick={handleCreateOrder}>Создать заказ</button>
 
       <h3>Мои заказы</h3>
+      {clientOrders.length === 0 && <p>Нет заказов</p>}
       {clientOrders.map(order => (
         <div key={order.id} style={{ border: '1px solid gray', margin: 10, padding: 10 }}>
           <p>От: {order.from} → До: {order.to}</p>

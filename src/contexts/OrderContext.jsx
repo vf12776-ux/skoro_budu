@@ -43,10 +43,14 @@ export const OrderProvider = ({ children }) => {
   }, [messages]);
 
   const addOrder = (order) => {
-    console.log('Добавлен заказ в контекст:', order);
-    setOrders(prev => [...prev, { ...order, id: Date.now(), status: 'pending' }]);
-  };
-
+  console.log('Добавлен заказ в контекст:', order);
+  setOrders(prev => [...prev, { 
+    ...order, 
+    id: Date.now(), 
+    status: 'pending',
+    clientId: order.clientId  // сохраняем ID клиента
+  }]);
+};
   const updateOrderStatus = (orderId, status) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
   };
