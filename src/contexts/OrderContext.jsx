@@ -73,6 +73,9 @@ export const OrderProvider = ({ children }) => {
   const rateOrder = (orderId, rating) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, rating } : o));
   };
+  const deleteOrder = (orderId) => {
+  setOrders(prev => prev.filter(o => o.id !== orderId));
+};
   const cancelOrder = (orderId) => {
   setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'cancelled' } : o));
 };
@@ -87,6 +90,7 @@ export const OrderProvider = ({ children }) => {
       addMessage,
       updateCourierLocation,
       rateOrder,
+      deleteOrder,
       cancelOrder
     }}>
       {children}
