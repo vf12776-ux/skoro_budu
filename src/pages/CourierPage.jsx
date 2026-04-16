@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useOrder } from '../contexts/OrderContext';
-import { Map } from '../components/Map';
 
 export const CourierPage = () => {
   const { orders, updateOrderStatus, addMessage, messages, updateCourierLocation } = useOrder();
   const [chatInput, setChatInput] = useState({});
-  const [courierId, setCourierId] = useState(1); // выбор ID курьера (число)
-  const courierOrders = orders.filter(o => o.courierId === courierId && o.status !== 'completed');
+  const [courierId, setCourierId] = useState(1);
+
+  const courierOrders = orders.filter(o => Number(o.courierId) === Number(courierId) && o.status !== 'completed');
 
   const handleSendLocation = (orderId) => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -27,39 +27,49 @@ export const CourierPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '20px' }}>
-  <label>ID курьера (1-5): </label>
-  <input 
-    type="number" 
-    min="1" 
-    max="5" 
-    value={courierId} 
-    onChange={e => setCourierId(Number(e.target.value))}
-    style={{ marginLeft: '10px' }}
-  />
-</div>
-      <h2>Курьер: Активные заказы</h2>
-      {courierOrders.length === 0 && <p>Нет активных заказов</p>}
+    <div>
+      <div className="card" style={{ marginBottom: 24 }}>
+        <label style={{ display: 'block', marginBottom: 8 }}>🆔 ID курьера (1-5):</label>
+        <input
+          type="number"
+          min="1"
+          max="5"
+          value={courierId}
+          onChange={e => setCourierId(Number(e.target.value))}
+          style={{ width: 'auto', display: 'inline-block' }}
+        />
+      </div>
+
+      <h3 style={{ marginBottom: 16 }}>🚚 Активные заказы</h3>
+      {courierOrders.length === 0 && <div className="card">Нет активных заказов</div>}
       {courierOrders.map(order => (
-        <div key={order.id} style={{ border: '1px solid blue', margin: 10, padding: 10 }}>
-          <p>От: {order.from} → До: {order.to}</p>
-          <p>Статус: {order.status}</p>
-          <button onClick={() => handleSendLocation(order.id)}>Отправить моё местоположение</button>
-          <button onClick={() => handleComplete(order.id)}>Завершить заказ</button>
+        <div key={order.id} className="card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 12 }}>
+            <div><strong>От:</strong> {order.from}</div>
+            <div><strong>До:</strong> {order.to}</div>
+            <div><span className="role-badge">{order.status}</span></div>
+          </div>
           {order.courierLocation && (
-            <p>Моё местоположение: {order.courierLocation.lat}, {order.courierLocation.lng}</p>
+            <div style={{ fontSize: 14, color: '#555', marginBottom: 12 }}>📍 Ваша локация: {order.courierLocation.lat.toFixed(5)}, {order.courierLocation.lng.toFixed(5)}</div>
           )}
-          <div>
-            <h4>Чат с клиентом</h4>
-            {(messages[order.id] || []).map((msg, i) => (
-              <p key={i}><b>{msg.sender}:</b> {msg.text}</p>
-            ))}
-            <input
-              value={chatInput[order.id] || ''}
-              onChange={e => setChatInput({ ...chatInput, [order.id]: e.target.value })}
-            />
-            <button onClick={() => handleSendMessage(order.id)}>Отправить</button>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontWeight: 600, marginBottom: 8 }}>💬 Чат с клиентом</div>
+            <div style={{ background: '#f8f9fa', borderRadius: 12, padding: 12, maxHeight: 200, overflowY: 'auto', marginBottom: 8 }}>
+              {(messages[order.id] || []).map((msg, i) => (
+                <div key={i} style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
+                  <strong>{msg.sender === 'courier' ? 'Вы' : 'Клиент'}:</strong>
+                  <span>{msg.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input value={chatInput[order.id] || ''} onChange={e => setChatInput({ ...chatInput, [order.id]: e.target.value })} placeholder="Сообщение..." />
+              <button className="primary" onClick={() => handleSendMessage(order.id)}>Отправить</button>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button className="success" onClick={() => handleSendLocation(order.id)}>📍 Отправить геолокацию</button>
+            <button className="danger" onClick={() => handleComplete(order.id)}>✅ Завершить заказ</button>
           </div>
         </div>
       ))}
