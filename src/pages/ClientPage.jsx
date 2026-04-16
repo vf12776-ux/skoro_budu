@@ -3,7 +3,7 @@ import { useOrder } from '../contexts/OrderContext';
 import { Map } from '../components/Map';
 
 export const ClientPage = () => {
-  const { orders, addOrder, addMessage, messages, rateOrder, cancelOrder} = useOrder();
+  const { orders, addOrder, addMessage, messages, rateOrder, cancelOrder,deleteOrder} = useOrder();
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [selectedLat, setSelectedLat] = useState(null);
@@ -73,6 +73,11 @@ export const ClientPage = () => {
           {order.status !== 'completed' && order.status !== 'cancelled' && (
   <button onClick={() => cancelOrder(order.id)} style={{ marginLeft: '10px', backgroundColor: 'red' }}>
     Отменить заказ
+  </button>
+)}
+{order.status === 'completed' && (
+  <button onClick={() => deleteOrder(order.id)} style={{ marginLeft: '10px', backgroundColor: 'gray', color: 'white' }}>
+    Удалить из истории
   </button>
 )}
           <div>
